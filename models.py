@@ -112,7 +112,7 @@ class SpKBGATModified(nn.Module):
 
     def forward(self, Corpus_, adj, batch_inputs, train_indices_nhop):
         # getting edge list
-        edge_list = adj[0]
+        edge_list = adj[0] 
         edge_type = adj[1]
 
         edge_list_nhop = torch.cat(
