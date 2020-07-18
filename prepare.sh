@@ -18,3 +18,7 @@ mkdir checkpoints/fb/out/conv
 mkdir checkpoints/kinship/out/conv
 mkdir checkpoints/umls/out/conv
 mkdir checkpoints/nell/out/conv
+
+
+mkdir gat/
+mkdir conv/

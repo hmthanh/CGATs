@@ -225,6 +225,7 @@ class Corpus:
 
         return self.batch_indices, self.batch_values
 
+    # Hàm tạo một hash dictionary có cấu trúc graph[head][tail] = value
     def get_graph(self):
         graph = {}
         all_tiples = torch.cat([self.train_adj_matrix[0].transpose(
@@ -297,6 +298,7 @@ class Corpus:
 
         return neighbors
 
+    # 
     def get_further_neighbors(self, nbd_size=2):
         neighbors = {}
         start_time = time.time()
