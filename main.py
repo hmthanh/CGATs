@@ -171,6 +171,7 @@ def train_gat(args):
 
     print(
         "\nModel type -> GAT layer with {} heads used , Initital Embeddings training".format(args.nheads_GAT[0]))
+    # SpKBGATModified : lớp GAT chính
     model_gat = SpKBGATModified(entity_embeddings, relation_embeddings, args.entity_out_dim, args.entity_out_dim,
                                 args.drop_GAT, args.alpha, args.nheads_GAT)
 
@@ -233,6 +234,7 @@ def train_gat(args):
             # forward pass
             entity_embed, relation_embed = model_gat(
                 Corpus_, Corpus_.train_adj_matrix, train_indices, current_batch_2hop_indices)
+            
 
             optimizer.zero_grad()
 

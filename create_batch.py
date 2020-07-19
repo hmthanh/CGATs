@@ -244,6 +244,7 @@ class Corpus:
         print("Graph created")
         return graph
 
+    # Trả ra danh sách neighbors[distance] = [(tuple(relations), tuple(entities[:-1]))]
     def bfs(self, graph, source, nbd_size=2):
         visit = {}
         distance = {}
@@ -298,7 +299,9 @@ class Corpus:
 
         return neighbors
 
-    # 
+    # Trả ra các node kế cận neighbors[source][distance] = [(tuple(relations), tuple(entities[:-1]))]
+    # entities[:-1] là lấy các entity kế cận trừ phần tử nguồn
+    # Tìm tất cả các node bắt đầu từ source, có khoảng cách distance=[1,2] node kế cận đi qua các realtions và entities
     def get_further_neighbors(self, nbd_size=2):
         neighbors = {}
         start_time = time.time()
@@ -322,6 +325,7 @@ class Corpus:
         print("length of neighbors dict is ", len(neighbors))
         return neighbors
 
+    # Trả ra tất các các node kế cận của một batch_sources
     def get_batch_nhop_neighbors_all(self, args, batch_sources, node_neighbors, nbd_size=2):
         batch_source_triples = []
         print("length of unique_entities ", len(batch_sources))
@@ -329,7 +333,7 @@ class Corpus:
         for source in batch_sources:
             # randomly select from the list of neighbors
             if source in node_neighbors.keys():
-                nhop_list = node_neighbors[source][nbd_size]
+                nhop_list = node_neighbors[source][nbd_size] # nbd_size ~ distance = 1, 2
 
                 for i, tup in enumerate(nhop_list):
                     if(args.partial_2hop and i >= 2):
@@ -337,7 +341,7 @@ class Corpus:
 
                     count += 1
                     batch_source_triples.append([source, nhop_list[i][0][-1], nhop_list[i][0][0],
-                                                 nhop_list[i][1][0]])
+                                                 nhop_list[i][1][0]]) # 
 
         return np.array(batch_source_triples).astype(np.int32)
 

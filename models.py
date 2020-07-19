@@ -112,8 +112,8 @@ class SpKBGATModified(nn.Module):
 
     def forward(self, Corpus_, adj, batch_inputs, train_indices_nhop):
         # getting edge list
-        edge_list = adj[0]
-        edge_type = adj[1]
+        edge_list = adj[0] # head_id and tail_id
+        edge_type = adj[1] # relation_id
 
         edge_list_nhop = torch.cat(
             (train_indices_nhop[:, 3].unsqueeze(-1), train_indices_nhop[:, 0].unsqueeze(-1)), dim=1).t()
@@ -140,8 +140,12 @@ class SpKBGATModified(nn.Module):
             Corpus_, batch_inputs, self.entity_embeddings, self.relation_embeddings,
             edge_list, edge_type, edge_embed, edge_list_nhop, edge_type_nhop)
 
-        mask_indices = torch.unique(batch_inputs[:, 2]).cuda()
-        mask = torch.zeros(self.entity_embeddings.shape[0]).cuda()
+        if (CUDA):
+            mask_indices = torch.unique(batch_inputs[:, 2]).cuda()
+            mask = torch.zeros(self.entity_embeddings.shape[0]).cuda()
+        else:
+            mask_indices = torch.unique(batch_inputs[:, 2])
+            mask = torch.zeros(self.entity_embeddings.shape[0])
         mask[mask_indices] = 1.0
 
         entities_upgraded = self.entity_embeddings.mm(self.W_entities)
