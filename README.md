@@ -1,2 +1,2 @@
-# Graph Collaborate Attention Networks (GCATs)
+# Graph Collaborate Attention Networks (CGATs)
 
