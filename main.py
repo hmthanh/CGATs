@@ -258,6 +258,7 @@ def train_gat(args):
 
         save_model(model_gat, args.data, epoch,
                    args.output_folder)
+    
 
 
 def train_conv(args):

@@ -15,6 +15,7 @@ class ConvKB(nn.Module):
 
         self.conv_layer = nn.Conv2d(
             in_channels, out_channels, (1, input_seq_len))  # kernel size -> 1*input_seq_length(i.e. 2)
+
         self.dropout = nn.Dropout(drop_prob)
         self.non_linearity = nn.ReLU()
         self.fc_layer = nn.Linear((input_dim) * out_channels, 1)
@@ -31,8 +32,10 @@ class ConvKB(nn.Module):
         # To make tensor of size 4, where second dim is for input channels
         conv_input = conv_input.unsqueeze(1)
 
-        out_conv = self.dropout(
-            self.non_linearity(self.conv_layer(conv_input)))
+        # (n_samples, channels, height, width)
+        conv_result = self.conv_layer(conv_input)
+        conv_non_linear = self.non_linearity(conv_result)
+        out_conv = self.dropout(conv_non_linear)
 
         input_fc = out_conv.squeeze(-1).view(batch_size, -1)
         output = self.fc_layer(input_fc)
@@ -88,7 +91,7 @@ class SpGraphAttentionLayer(nn.Module):
         self.alpha = alpha
         self.concat = concat
         self.nrela_dim = nrela_dim
-
+    
         self.a = nn.Parameter(torch.zeros(
             size=(out_features, 2 * in_features + nrela_dim)))
         nn.init.xavier_normal_(self.a.data, gain=1.414)
@@ -112,7 +115,7 @@ class SpGraphAttentionLayer(nn.Module):
         # edge_h: (2*in_dim + nrela_dim) x E
 
         edge_m = self.a.mm(edge_h)
-        # edge_m: D * E
+        # edge_m: D * E 
 
         # to be checked later
         powers = -self.leakyrelu(self.a_2.mm(edge_m).squeeze())

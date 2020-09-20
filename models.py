@@ -38,7 +38,8 @@ class SpGAT(nn.Module):
         nn.init.xavier_uniform_(self.W.data, gain=1.414)
 
         self.out_att = SpGraphAttentionLayer(num_nodes, nhid * nheads,
-                                             nheads * nhid, nheads * nhid,
+                                             nheads * nhid,
+                                             nheads * nhid,
                                              dropout=dropout,
                                              alpha=alpha,
                                              concat=False
@@ -112,7 +113,7 @@ class SpKBGATModified(nn.Module):
 
     def forward(self, Corpus_, adj, batch_inputs, train_indices_nhop):
         # getting edge list
-        edge_list = adj[0] # head_id and tail_id
+        edge_list = adj[0] # tail_id and head_id
         edge_type = adj[1] # relation_id
 
         edge_list_nhop = torch.cat(
