@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def getID(folder='./data/WN18RR/'):
+def getID(folder='./data/Thanh/'):
     lstEnts = {}
     lstRels = {}
     with open(folder + 'train.txt') as f, open(folder + 'train_marked.txt', 'w') as f2:

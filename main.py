@@ -21,10 +21,6 @@ import logging
 import time
 import pickle
 
-# %%
-# %%from torchviz import make_dot, make_dot_from_trace
-
-
 def parse_args():
     args = argparse.ArgumentParser()
     # network arguments
@@ -80,9 +76,9 @@ def parse_args():
     args = args.parse_args()
     return args
 
-
 args = parse_args()
-# %%
+
+device = "cuda" if args.cuda else "cpu"
 
 
 def load_data(args):
@@ -109,22 +105,20 @@ def load_data(args):
 
 Corpus_, entity_embeddings, relation_embeddings = load_data(args)
 
+# if(args.get_2hop):
+#     file = args.data + "/2hop.pickle"
+#     with open(file, 'wb') as handle:
+#         pickle.dump(Corpus_.node_neighbors_2hop, handle,
+#                     protocol=pickle.HIGHEST_PROTOCOL)
+# 
+# if(args.use_2hop):
+#     print("Opening node_neighbors pickle object")
+#     file = args.data + "/2hop.pickle"
+#     with open(file, 'rb') as handle:
+#         node_neighbors_2hop = pickle.load(handle)
 
-if(args.get_2hop):
-    file = args.data + "/2hop.pickle"
-    with open(file, 'wb') as handle:
-        pickle.dump(Corpus_.node_neighbors_2hop, handle,
-                    protocol=pickle.HIGHEST_PROTOCOL)
-
-
-if(args.use_2hop):
-    print("Opening node_neighbors pickle object")
-    file = args.data + "/2hop.pickle"
-    with open(file, 'rb') as handle:
-        node_neighbors_2hop = pickle.load(handle)
-
-entity_embeddings_copied = deepcopy(entity_embeddings)
-relation_embeddings_copied = deepcopy(relation_embeddings)
+# entity_embeddings_copied = deepcopy(entity_embeddings)
+# relation_embeddings_copied = deepcopy(relation_embeddings)
 
 print("Initial entity dimensions {} , relation dimensions {}".format(
     entity_embeddings.size(), relation_embeddings.size()))
@@ -163,7 +157,6 @@ def batch_gat_loss(gat_loss_func, train_indices, entity_embed, relation_embed):
 
 
 def train_gat(args):
-
     # Creating the gat model here.
     ####################################
 
@@ -258,11 +251,9 @@ def train_gat(args):
 
         save_model(model_gat, args.data, epoch,
                    args.output_folder)
-    
 
 
 def train_conv(args):
-
     # Creating convolution model here.
     ####################################
 
@@ -278,8 +269,13 @@ def train_conv(args):
         model_conv.cuda()
         model_gat.cuda()
 
-    model_gat.load_state_dict(torch.load(
-        '{}/trained_{}.pth'.format(args.output_folder, args.epochs_gat - 1)), strict=False)
+    folder = "{output}/{dataset}".format(output=args.output_folder, dataset=args.dataset)
+    if args.save_gdrive:
+        folder = args.drive_folder
+    model_name = "{folder}/{dataset}_{device}_{name}_{epoch}.pt".format(folder=folder, dataset=args.dataset,
+                                                                        device=device, name="gat",
+                                                                        epoch=args.epochs_gat - 1)
+    model_gat.load_state_dict(torch.load(model_name), strict=False)
     model_conv.final_entity_embeddings = model_gat.final_entity_embeddings
     model_conv.final_relation_embeddings = model_gat.final_relation_embeddings
 
@@ -357,16 +353,20 @@ def evaluate_conv(args, unique_entities):
     model_conv = SpKBGATConvOnly(entity_embeddings, relation_embeddings, args.entity_out_dim, args.entity_out_dim,
                                  args.drop_GAT, args.drop_conv, args.alpha, args.alpha_conv,
                                  args.nheads_GAT, args.out_channels)
-    model_conv.load_state_dict(torch.load(
-        '{0}conv/trained_{1}.pth'.format(args.output_folder, args.epochs_conv - 1)), strict=False)
-
-    model_conv.cuda()
+    folder = "{output}/{dataset}".format(output=args.output_folder, dataset=args.dataset)
+    if args.save_gdrive:
+        folder = args.drive_folder
+    model_name = "{folder}/{dataset}_{device}_{name}_{epoch}.pt".format(folder=folder, dataset=args.dataset,
+                                                                        device=device, name="conv",
+                                                                        epoch=args.epochs_conv - 1)
+    model_conv.load_state_dict(torch.load(model_name), strict=False)
+    if args.cuda:
+        model_conv.cuda()
     model_conv.eval()
     with torch.no_grad():
         Corpus_.get_validation_pred(args, model_conv, unique_entities)
 
 
 train_gat(args)
-
 train_conv(args)
 evaluate_conv(args, Corpus_.unique_entities_train)

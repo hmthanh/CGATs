@@ -24,7 +24,6 @@ class ConvKB(nn.Module):
         nn.init.xavier_uniform_(self.conv_layer.weight, gain=1.414)
 
     def forward(self, conv_input):
-
         batch_size, length, dim = conv_input.size()
         # assuming inputs are of the form ->
         conv_input = conv_input.transpose(1, 2)
@@ -102,20 +101,19 @@ class SpGraphAttentionLayer(nn.Module):
         self.leakyrelu = nn.LeakyReLU(self.alpha)
         self.special_spmm_final = SpecialSpmmFinal()
 
-    def forward(self, input, edge, edge_embed, edge_list_nhop, edge_embed_nhop):
-        N = input.size()[0]
+    def forward(self, entity_embding, headTail_id, relation_emb, headTail_nhop_id, relation_emb_nhop):
+        N = entity_embding.size()[0]
 
         # Self-attention on the nodes - Shared attention mechanism
-        edge = torch.cat((edge[:, :], edge_list_nhop[:, :]), dim=1)
-        edge_embed = torch.cat(
-            (edge_embed[:, :], edge_embed_nhop[:, :]), dim=0)
+        headTail_id = torch.cat((headTail_id[:, :], headTail_nhop_id[:, :]), dim=1)
+        relation_cat_emb = torch.cat((relation_emb[:, :], relation_emb_nhop[:, :]), dim=0)
 
         edge_h = torch.cat(
-            (input[edge[0, :], :], input[edge[1, :], :], edge_embed[:, :]), dim=1).t()
+            (entity_embding[headTail_id[0, :], :], entity_embding[headTail_id[1, :], :], relation_cat_emb[:, :]), dim=1).t()
         # edge_h: (2*in_dim + nrela_dim) x E
 
         edge_m = self.a.mm(edge_h)
-        # edge_m: D * E 
+        # edge_m: D * E
 
         # to be checked later
         powers = -self.leakyrelu(self.a_2.mm(edge_m).squeeze())
@@ -124,7 +122,7 @@ class SpGraphAttentionLayer(nn.Module):
         # edge_e: E
 
         e_rowsum = self.special_spmm_final(
-            edge, edge_e, N, edge_e.shape[0], 1)
+            headTail_id, edge_e, N, edge_e.shape[0], 1)
         e_rowsum[e_rowsum == 0.0] = 1e-12
 
         e_rowsum = e_rowsum
@@ -138,7 +136,7 @@ class SpGraphAttentionLayer(nn.Module):
         # edge_w: E * D
 
         h_prime = self.special_spmm_final(
-            edge, edge_w, N, edge_w.shape[0], self.out_features)
+            headTail_id, edge_w, N, edge_w.shape[0], self.out_features)
 
         assert not torch.isnan(h_prime).any()
         # h_prime: N x out

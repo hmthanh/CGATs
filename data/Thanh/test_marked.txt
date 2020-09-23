@@ -1,0 +1,2 @@
+Melania_Trump	first_lady	U.S
+Tom_Cruise	native_of	U.S

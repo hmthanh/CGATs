@@ -1,0 +1,8 @@
+Melania Trump	wife_of		Donald Trump
+Tom Cruise	born_in		New York
+Donald Trump	president_of	U.S
+New York	state_of	U.S
+Jeff Bezos		richest_of		U.S
+Tesla Inc.		founded_in		U.S
+Tom Cruise		native_of		U.S
+Melania Trump	first_lady	U.S

@@ -1,0 +1,9 @@
+Melania_Trump	wife_of	Donald_Trump
+Donald_Trump	president_of	U.S
+Jeff_Bezos	richest_of	U.S
+Tom_Cruise	born_in	New_York
+New_York	state_of	U.S
+Tesla_Inc	founded_in	U.S
+Melania_Trump	first_lady	U.S
+Tom_Cruise	native_of	U.S
+Thanh	friend_of	Melania_Trump

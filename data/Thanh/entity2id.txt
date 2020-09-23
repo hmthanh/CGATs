@@ -1,0 +1,8 @@
+Melania_Trump	0
+Donald_Trump	1
+U.S	2
+Jeff_Bezos	3
+Tom_Cruise	4
+New_York	5
+Tesla_Inc	6
+Thanh	7

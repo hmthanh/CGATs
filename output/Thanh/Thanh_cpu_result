@@ -1,0 +1,21 @@
+
+Averaged stats for replacing head are -> 
+Hits@10 are 1.0
+Hits@3 are 0.0
+Hits@1 are 0.0
+Mean rank 4.0
+Mean Reciprocal Rank 0.25
+
+Averaged stats for replacing tail are -> 
+Hits@10 are 1.0
+Hits@3 are 1.0
+Hits@1 are 0.0
+Mean rank 2.5
+Mean Reciprocal Rank 0.41666666666666663
+
+Cumulative stats are -> 
+Hits@10 are 1.0
+Hits@3 are 0.5
+Hits@1 are 0.0
+Mean rank 3.25
+Mean Reciprocal Rank 0.3333333333333333

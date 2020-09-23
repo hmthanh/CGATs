@@ -1,0 +1,2 @@
+New_York	state_of	U.S
+Tesla_Inc	founded_in	U.S
