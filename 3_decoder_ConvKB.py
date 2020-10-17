@@ -16,7 +16,6 @@ print("Loading corpus")
 Corpus_ = load_object(output=args.data_folder, name="corpus")
 entity_embeddings = load_object(output=args.data_folder, name="entity_embeddings")
 relation_embeddings = load_object(output=args.data_folder, name="relation_embeddings")
-node_neighbors_2hop = Corpus_.node_neighbors_2hop
 
 print("Defining model")
 model_gat = SpKBGATModified(entity_embeddings, relation_embeddings, args.entity_out_dim, args.entity_out_dim,
